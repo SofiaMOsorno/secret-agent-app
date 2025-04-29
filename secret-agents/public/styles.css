@@ -37,7 +37,7 @@ body {
     width: 100%;
 }
 
-.auth-buttons, .login-form, .actions{
+.auth-buttons, .login-form, .actions, .register-form{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,7 +50,7 @@ body {
     flex-direction: row;
 }
 
-.login-form{
+.login-form, .register-form{
     flex-direction: column;
 }
 
