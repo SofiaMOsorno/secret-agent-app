@@ -8,6 +8,10 @@ router.get('/', (req: Request, res: Response) => {
   res.render('index');
 });
 
+router.get('/register', (req: Request, res: Response) => {
+    res.render('register');
+  });
+
 // Auth routes
 router.post('/register', async (req: Request, res: Response) => {
   try {

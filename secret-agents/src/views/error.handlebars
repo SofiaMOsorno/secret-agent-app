@@ -1,0 +1,16 @@
+<div class="error-container">
+  <h2>Error</h2>
+  
+  {{#if error}}
+    <p class="error-message">{{error}}</p>
+  {{else}}
+    <p class="error-message">An unexpected error occurred</p>
+  {{/if}}
+  
+  <div class="error-actions">
+    <a href="/" class="btn">Return to Home</a>
+    {{#if user}}
+      <a href="/dashboard" class="btn">Return to Dashboard</a>
+    {{/if}}
+  </div>
+</div>
