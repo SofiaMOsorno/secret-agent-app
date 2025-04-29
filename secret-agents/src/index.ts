@@ -3,10 +3,14 @@ import session from 'express-session';
 import { engine } from 'express-handlebars';
 import { join } from 'path';
 import { config } from 'dotenv';
+import { connectDB } from './config/db';
 import routes from './routes';
 
 // Load environment variables
 config();
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 

@@ -1,84 +1,107 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { AuthService } from '../services/auth';
+import { FileController } from '../controllers/file';
 import { fileUpload } from '../middlewares/files';
+import { auth } from '../middlewares/auth';
 
 const router = Router();
+const authService = new AuthService();
+const fileController = new FileController();
 
-// Home
-router.get('/', (req: Request, res: Response) => {
+// Public routes
+router.get('/', (req, res) => {
   res.render('index');
 });
 
-router.get('/register', (req: Request, res: Response) => {
-    res.render('register');
-  });
+router.get('/login', (req, res) => {
+  if (req.session.userId) {
+    return res.redirect('/dashboard');
+  }
+  res.render('login', { error: req.session.error });
+});
 
-// Auth routes
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/login', async (req, res) => {
   try {
-    // TODO: Implement real registration
+    const { email, password } = req.body;
+    const result = await authService.authenticateUser(email, password);
+
+    if (!result.success || !result.user) {
+      return res.render('login', { error: result.error });
+    }
+
+    req.session.userId = result.user.id;
+    req.session.isAuthenticated = true;
+    req.session.userRole = result.user.isLeader ? 'leader' : 'agent';
+
     res.redirect('/dashboard');
   } catch (error) {
-    res.status(400).render('register', { error: 'Registration failed' });
+    console.error('Login error:', error);
+    res.render('login', { error: 'Login failed' });
   }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.get('/register', (req, res) => {
+  if (req.session.userId) {
+    return res.redirect('/dashboard');
+  }
+  res.render('register');
+});
+
+router.post('/register', async (req, res) => {
   try {
-    // TODO: Implement real authentication
+    const { email, password, inviteCode } = req.body;
+    const isLeader = inviteCode === process.env.LEADER_INVITE_CODE;
+
+    const result = await authService.registerUser(email, password, isLeader);
+    
+    if (!result.success || !result.user) {
+      return res.render('register', { error: result.error });
+    }
+
+    req.session.userId = result.user.id;
+    req.session.isAuthenticated = true;
+    req.session.userRole = result.user.isLeader ? 'leader' : 'agent';
+
     res.redirect('/dashboard');
   } catch (error) {
-    res.status(400).render('login', { error: 'Login failed' });
+    console.error('Registration error:', error);
+    res.render('register', { error: 'Registration failed' });
   }
 });
 
-router.get('/login', (req: Request, res: Response) => {
-  res.render('login');
-});
+// Protected routes
+router.use(auth);
 
-router.get('/logout', (req: Request, res: Response) => {
-  // TODO: Implement real logout
-  res.redirect('/login');
-});
-
-router.get('/dashboard', (req: Request, res: Response) => {
-  // TODO: Implement real dashboard data fetching
-  const mockData = {
-    onlineAgents: [],
-    recentMessages: [],
-    recentFiles: [],
-    userRole: 'agent'
-  };
-  
-  res.render('dashboard', mockData);
-});
-
-router.post('/upload', fileUpload.single('file'), (req: Request, res: Response) => {
-  // TODO: Implement real file upload
-  console.log(req.file);
-  res.json({
-    success: true,
-    fileId: 'mock-file-id',
-    filename: 'mock-file.txt'
-  });
-});
-
-router.post('/message', (req: Request, res: Response) => {
-  // TODO: Implement real messaging
-  res.json({
-    success: true,
-    messageId: 'mock-message-id',
-    timestamp: new Date()
-  });
-});
-
-// Error 404 - Página no encontrada
-router.use((req: Request, res: Response) => {
-    res.status(404).render('error', {
-      error: 'Página no encontrada',
-      message: 'La página que estás buscando no existe.',
-      code: 404
+router.get('/dashboard', async (req, res) => {
+  try {
+    const files = await fileController.getUserFiles(req, res);
+    res.render('dashboard', {
+      files,
+      userRole: req.session.userRole
     });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.render('error', { error: 'Failed to load dashboard' });
+  }
+});
+
+router.post('/upload', fileUpload.single('file'), fileController.uploadFile);
+
+router.get('/files', fileController.getUserFiles);
+
+router.delete('/files/:fileId', fileController.deleteFile);
+
+router.get('/logout', async (req, res) => {
+  if (req.session.userId) {
+    await authService.logoutUser(req.session.userId);
+  }
+  
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Session destruction error:', err);
+    }
+    res.redirect('/login');
   });
+});
 
 export default router;
