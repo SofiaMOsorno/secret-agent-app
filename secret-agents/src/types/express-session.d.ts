@@ -1,8 +1,9 @@
 import 'express-session';
-import { Types } from 'mongoose';
 
 declare module 'express-session' {
-  interface SessionData {
-    userId: Types.ObjectId;
+    interface SessionData {
+      userId: string | undefined;
+      isAuthenticated?: boolean;
+      userRole?: 'agent' | 'leader';
+    }
   }
-}
