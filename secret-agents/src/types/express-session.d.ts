@@ -5,5 +5,6 @@ declare module 'express-session' {
     userId?: string;
     isAuthenticated?: boolean;
     userRole?: 'agent' | 'leader';
+    error?: string;
   }
 }
