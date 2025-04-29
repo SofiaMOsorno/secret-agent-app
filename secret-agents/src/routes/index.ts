@@ -16,7 +16,7 @@ router.get('/register', (req: Request, res: Response) => {
 // Auth routes
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    // TODO: Implement real registration
+    // Falta un registro real
     res.redirect('/dashboard');
   } catch (error) {
     res.status(400).render('register', { error: 'Registration failed' });
