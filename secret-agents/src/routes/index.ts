@@ -72,4 +72,13 @@ router.post('/message', (req: Request, res: Response) => {
   });
 });
 
+// Error 404 - Página no encontrada
+router.use((req: Request, res: Response) => {
+    res.status(404).render('error', {
+      error: 'Página no encontrada',
+      message: 'La página que estás buscando no existe.',
+      code: 404
+    });
+  });
+
 export default router;
