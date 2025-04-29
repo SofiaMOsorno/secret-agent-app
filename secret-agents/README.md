@@ -1,3 +1,18 @@
+# Librerias
+npm install dotenv express express-handlebars express-session mongoose multer multer-s3 nodemailer socket.io @aws-sdk/client-s3 @aws-sdk/lib-storage crypto
+
+# Librerias desarrollo
+npm install -D typescript ts-node nodemon rimraf @types/express @types/express-session @types/multer @types/multer-s3 @types/nodemailer @types/node
+
+Tambien debería ser suficiente con ejecutar "npm install"
+
+# Ejecutar el servidor
+npm run dev
+
+
+
+
+
 # 🕵️‍♂️ Aplicación de Comunicación Segura para Agentes Secretos
 
 ## 🎯 Objetivo

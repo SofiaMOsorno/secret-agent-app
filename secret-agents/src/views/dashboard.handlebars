@@ -1,0 +1,35 @@
+<h2>Agent Dashboard</h2>
+
+<div class="dashboard-grid">
+  <div class="online-agents">
+    <h3>Online Agents</h3>
+    <ul>
+      {{#each onlineAgents}}
+        <li class="agent {{status}}">{{codename}}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="recent-messages">
+    <h3>Recent Messages</h3>
+    <ul>
+      {{#each recentMessages}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="recent-files">
+    <h3>Recent Files</h3>
+    <ul>
+      {{#each recentFiles}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
+
+<div class="actions">
+  <button id="new-message">New Message</button>
+  <button id="upload-file">Upload File</button>
+</div>
