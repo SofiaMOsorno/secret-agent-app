@@ -1,0 +1,1 @@
+Hicimos unos cambios que rompieron todo, no supimos como deshacer commits así que descargamos el código en una versión antigua (Fix S3 and implement error page) y las subimos a una branch que hicimos main 
