@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { AuthService } from '../services/auth';
+import { fileUpload } from '../middlewares/files';
 
 const router = Router();
 
@@ -52,8 +53,9 @@ router.get('/dashboard', (req: Request, res: Response) => {
   res.render('dashboard', mockData);
 });
 
-router.post('/upload', (req: Request, res: Response) => {
+router.post('/upload', fileUpload.single('file'), (req: Request, res: Response) => {
   // TODO: Implement real file upload
+  console.log(req.file);
   res.json({
     success: true,
     fileId: 'mock-file-id',
